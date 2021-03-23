@@ -8,7 +8,7 @@ export default class GifService {
     return new Promise((resolve, reject) => {
       
       this.gf.search(name, options)
-        .then(({data: gifs}) => resolve(gifs))
+        .then((res) => resolve({gifs: res.data, total: res.pagination.total_count}))
         .catch(err => reject(err))
        
     })
