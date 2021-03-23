@@ -1,12 +1,7 @@
 import { createStore } from 'vuex'
-
+import gifs from './gifs';
 export default createStore({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
   modules: {
+    gifs
   }
 })
