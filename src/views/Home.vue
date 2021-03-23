@@ -1,15 +1,17 @@
 <template>
   <div class="home">
-    
+    <gif-list />
   </div>
 </template>
 
 <script>
+import GifList from '../components/GifList'
 import GifService from '../services/gifs-service'
 import { Giphy } from '../services'
 export default {
   name: 'Home',
   components: {
+    GifList
   },
   data() {
     return {
@@ -28,7 +30,10 @@ export default {
 
 <style lang="scss" scoped>
 .home {
-  background-color: red;
-  min-height: calc(100vh - 50px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 69px);
 }
 </style>
