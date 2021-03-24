@@ -1,77 +1,57 @@
 <template>
   <div class="gif">
     <div class="gif__header">
-      <h2 class="gif__title">{{limitWordLength(title)}}</h2>
+      <h2 class="gif__title">{{limitWordLength(gif.title)}}</h2>
       <div class="gif__actions">
-        <button-icon class="gif__btn_detail" @click="toggleGifDetails">
-          <font-awesome-icon icon="times" size="1x" v-if="icon === 'times'"/>
-          <font-awesome-icon icon="ellipsis-h" size="1x" v-else/>
-        </button-icon>
-        <button-icon  class="gif__btn_favor" @click="saveGif">
-          <font-awesome-icon icon="heart" size="1x" :class="{'gif__btn_favor--save': saved}"/>
-        </button-icon>
+        <slot name="nav"></slot>
       </div>
     </div>
-    <img :src="url" width="290" class="gif__image"/>
-    <gif-details 
+    <img :src="gif.images.downsized.url" width="290" class="gif__image" />
+    <gif-list-item-details 
       class="gif__detail" 
-      v-if="showGifDetails"
-      :width="width"
-      :height="height"
-      :size="size"
-      :uploaded="uploaded"
-      :rating="rating"
+      v-if="detail"
+      :width="gif.images.downsized.width"
+      :height="gif.images.downsized.height"
+      :size="gif.images.downsized.size"
+      :uploaded="gif.import_datetime"
+      :rating="gif.rating"
     />
     <div class="gif__footer">
-      <img :src="avatar" class="gif__avatar" width="30" height="30"/>
-      <p class="gif__author">{{getAuthor(author)}}</p>
+      <img :src="getAvatar(gif.user)" class="gif__avatar" width="30" height="30"/>
+      <p class="gif__author">{{getAuthor(gif.user)}}</p>
     </div>
-
   </div>
 </template>
 
 <script>
-import ButtonIcon from './base/ButtonIcon';
-import GifDetails from './GifDetails'
+import GifListItemDetails from './GifListItemDetails';
+import { mapMutations } from 'vuex';
+
 export default {
   name: 'GifListItem',
   props: {
-    url: String,
-    width: String,
-    height: String,
-    size: String,
-    title: String,
-    author: String,
-    avatar: String,
-    uploaded: String,
-    rating: String
+    gif: Object,
+    detail: {
+      type: Boolean,
+      default: false
+    }
   },
   components: {
-    ButtonIcon,
-    GifDetails
-  },
-  data: () => ({
-    showGifDetails: false,
-    icon: 'ellipsis-h',
-    saved: false
-  }),
-  created() {
-   
+    GifListItemDetails,
   },
   methods: {
-    toggleGifDetails() {
-      this.showGifDetails = !this.showGifDetails;
-      this.icon = (this.showGifDetails) ? 'times' : 'ellipsis-h';
-    },
-    saveGif() {
-      this.saved = !this.saved
-    },
     limitWordLength(word) {
       return (word.length > 20) ? word.slice(0, 15) + '...' : word;
     },
     getAuthor(value) {
-      return (value) ? value : 'sem autor';
-    }
+      return (value) ? value.username : 'sem autor';
+    },
+    getAvatar(value) {
+      return (value) ? value.avatar_url : ''
+    },
+    ...mapMutations('favorites', [
+      'saveFavorite'
+    ])
   }
 }
 </script>
@@ -80,23 +60,31 @@ export default {
 .gif {
   position: relative;
   margin: 5px;
+  width: 230px;
+  @include respond-to(medium-screens) {
+    width: 375px
+  }
+  @include respond-to(handhelds) {
+    display: flex;
+    justify-content: center;
+    width: 95%
+  }
 }
-.gif:hover .gif__header,
+/* .gif:hover .gif__header,
 .gif:hover .gif__footer,
 .gif:hover .gif__details {
   visibility: visible;
-}
+} */
 .gif__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  visibility: hidden;
   min-height: 30px;
   background-color: rgba(0,0,0,0.4);
   color: white;
   position: absolute;
   top: 0;
-  width: 290px;
+  width: inherit;
   .gif__btn_detail {
     margin-right: 10px
   };
@@ -104,28 +92,28 @@ export default {
     margin-left: 10px;
     font-size: 12px
   };
-  .gif__btn_favor {
+  .gif__actions {
     margin-right: 10px
-  };
-  .gif__btn_favor--save {
-    color: rgb(248, 85, 85);
   }
 }
 .gif__image {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 190px;
+  width: inherit;
+
 }
 .gif__footer {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  visibility: hidden;
+ 
   min-height: 30px;
   background-color: rgba(0,0,0,0.4);
   position: absolute;
   bottom: 0;
-  width: 290px;
+  width: inherit;
   color: white;
   font-weight: 550;
   font-size: 14px;
