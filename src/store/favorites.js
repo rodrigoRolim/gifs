@@ -4,7 +4,8 @@ const state = {
 
 const getters = {
   favorites: state => state.favorites,
-  isSaved: state => id => state.favorites.some(fv => fv.id === id)
+  isSaved: state => id => state.favorites.some(fv => fv.id === id),
+  findNameById: state => id => state.favorites.find(fv => fv.id === id).title
 }
 
 const actions = {
@@ -13,19 +14,17 @@ const actions = {
 
 const mutations = {
   saveFavorite(state, gif) {
-    state.favorites.push(gif);
+    const favorite = JSON.parse(gif);
+    state.favorites.push(favorite);
     console.log(state.favorites);
   },
   removeFavorite(state, id) {
     state.favorites = state.favorites.filter(fv => fv.id !== id);
     console.log(state.favorites);
   },
-  updateFavorite(state, {id, newData}) {
+  updateFavoriteName(state, {id, newName}) {
     let gif = state.favorites.find(fv => fv.id === id);
-    const keys = Object.keys(newData);
-    for (const key in keys) {
-      gif[key] = newData[key]
-    }
+    gif.title = newName;
   },
   removeAllFavorites(state) {
     state.favorites = []
