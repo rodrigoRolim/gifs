@@ -1,38 +1,24 @@
 <template>
   <header class="navbar">
-    <g-select class="navbar__select" placeholder="classificação" :options="getRatings" @selected="updateRating"/>
-    <g-select class="navbar__select" placeholder="idioma" />
-    <gif-search class="navbar__search" />
-    <div class="navbar__navigation">
-      <!-- <router-link to="#">buscar</router-link> -->
-      <router-link to="#">tendências</router-link>
-      <router-link to="#">favoritos</router-link>
+    <div class="navbar__content">
+      <slot name="filters"></slot>
+      <div class="navbar__navigation">
+        <router-link to="/favoritos">
+          <span class="navbar__link">favoritos</span>
+          <i class="navbar__icon"><font-awesome-icon icon="heart" size="2x" /></i>
+        </router-link>
+        <router-link to="/">
+          <span class="navbar__link">buscar</span>
+          <i class="navbar__icon"><font-awesome-icon icon="search" size="2x" /></i>
+        </router-link>
+      </div>
     </div>
   </header>
 </template>
 
 <script>
-import { Ratings } from '../services/ratings';
-import GifSearch from './GifSearch';
-import GSelect from './base/GSelect';
-import { mapMutations } from 'vuex';
-
 export default {
-  name: 'TheNavbar',
-  components: {
-    GifSearch,
-    GSelect
-  },
-  computed: {
-    getRatings() {
-      return Ratings;
-    }
-  },
-  methods: {
-    ...mapMutations('gifs', [
-      'updateRating'
-    ])
-  }
+  name: 'TheNavbar'
 }
 </script>
 
@@ -40,16 +26,24 @@ export default {
 .navbar {
   align-self: center;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  padding: 15px 5px;
+  padding: 15px 25px;
   font-weight: bold;
-  width: 1040px;
+  width: 100%;
+  border-bottom: 1.5px solid #fafafa2d;
   user-select: none;
+  .navbar__content {
+    width: 100%;
+    display: flex;
+    justify-content: inherit;
+    align-items: inherit;
+  }
   .navbar__navigation {
+    margin-left: auto;
     display: flex;
     justify-content: flex-end;
-    width: 235px;
+    width: 10em;
     a {
       color: #b4b4b4;
       text-decoration: none;
@@ -58,13 +52,18 @@ export default {
     };
     a:hover {
       color: white;
+    };
+    .navbar__link {
+      @include respond-to(handhelds) {
+        display: none;
+      }
+    };
+    .navbar__icon {
+      display: none;
+      @include respond-to(handhelds) {
+        display: block;
+      }
     }
-  };
-  .navbar__select {
-    width: 10em
-  };
-  .navbar__search {
-    width: 420px
   }
 }
 </style>
