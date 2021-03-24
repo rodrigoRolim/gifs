@@ -12,30 +12,38 @@
             :gifId="gif.id"
             :gif="gif"
             @showDetails="toggleGifDetails"
+            @callUpdateModal="updateFavorite"
           />
         </template>
       </gif-list-item>
     </div>
-    <!-- <spinner v-if="isLoading"/> -->
   </div>
+  <favorite-edit 
+    v-if="showModalUpdate"
+    @selfClose="showModalUpdate = $value" 
+    :updateId="updateId" 
+  />
 </template>
 
 <script>
 import GifListItem from './GifListItem'
 import FavoriteListNav from './FavoriteListNav';
-/* import Spinner from './base/Spinner' */
+import FavoriteEdit from './FavoriteEdit';
+
 export default {
   name: 'FavoriteList',
   components: {
     GifListItem,
     FavoriteListNav,
-   /*  Spinner */
+    FavoriteEdit
   },
   props: {
     gifs: Array
   },
   data: () => ({
     gifId: '',
+    updateId: '',
+    showModalUpdate: false,
     options: {
       sort: 'relevant', 
       lang: 'en', 
@@ -62,6 +70,11 @@ export default {
     },
     avatar(value) {
       return (value) ? value.avatar_url : ''
+    },
+    updateFavorite(value) {
+      console.log(value)
+      this.updateId = value.id;
+      this.showModalUpdate = value.show
     }
   }
 }
