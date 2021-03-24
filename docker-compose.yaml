@@ -1,0 +1,4 @@
+frontend:
+  image: atitude:1.0
+  ports:
+    - 80:80
