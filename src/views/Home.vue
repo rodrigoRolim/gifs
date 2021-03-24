@@ -1,29 +1,51 @@
 <template>
-  <div class="home">
-    <gif-list />
+  <the-navbar>
+    <template v-slot:filters>
+      <div class="navbar__filters">
+        <g-select class="navbar__select" placeholder="classificação" :options="getRatings" @selected="updateRating"/>
+        <g-select class="navbar__select" placeholder="idioma" :options="getLanguages" @selected="updateLanguage"/>
+        <gif-search class="navbar__search" />
+      </div>
+    </template>
+  </the-navbar>
+  <div class="home" v-if="gifs">
+    <gif-list :gifs="gifs"/>
   </div>
 </template>
 
 <script>
-import GifList from '../components/GifList'
-import GifService from '../services/gifs-service'
-import { Giphy } from '../services'
+import TheNavbar from '../components/TheNavbar'
+import GifList from '../components/GifList';
+import GifSearch from '../components/GifSearch';
+import GSelect from '../components/base/GSelect';
+import { mapGetters, mapMutations } from 'vuex';
+import { Ratings } from '../services/ratings';
+import { Languages } from '../services/langs';
+
 export default {
   name: 'Home',
   components: {
-    GifList
+    GifList,
+    GifSearch,
+    GSelect,
+    TheNavbar
   },
-  data() {
-    return {
-      name
+  computed: {
+    ...mapGetters('gifs', [
+      'gifs'
+    ]),
+    getRatings() {
+      return Ratings;
+    },
+    getLanguages() {
+      return Languages
     }
-    
   },
-  created() {
-    const name = 'dog';
-    const options = { sort: 'relevant', lang: 'en', limit: 10, type: 'stickers' }
-    const gf = new GifService(Giphy)
-    gf.search(name, options)
+  methods: {
+    ...mapMutations('gifs', [
+      'updateRating',
+      'updateLanguage'
+    ])
   }
 }
 </script>
@@ -34,6 +56,26 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 69px);
+  min-height: calc(100vh - 70.5px);
 }
+.navbar__select {
+  width: 25%;
+  @include respond-to(medium-screens) {
+    width: 25%
+  }
+};
+.navbar__search {
+  width: 45%;
+  @include respond-to(medium-screens) {
+    width: 45%
+  }
+}
+.navbar__filters {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  @include respond-to(medium-screens) {
+    width: 100%
+  }
+} 
 </style>
