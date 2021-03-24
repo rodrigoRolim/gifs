@@ -25,7 +25,9 @@ export default {
       'removeFavorite',
       'updateFavorite'
     ]),
-
+    updateFavorite() {
+      this.$emit('callUpdateModal', { id: this.gifId, show: true })
+    }
   }
 }
 </script>
