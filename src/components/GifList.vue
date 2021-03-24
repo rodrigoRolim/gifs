@@ -1,18 +1,20 @@
 <template>
-  <div class="gifs" ref="gifs">
-    <div class="gifs__list" v-if="gifs">
+  <div class="gifs" id="gifs">
+    <div class="gifs__list" >
        <gif-list-item
         v-for="gif of gifs" :key="gif.id"
-        :width="gif.images.original.width"
-        :height="gif.images.original.height"
-        :size="gif.images.original.size"
-        :url="gif.images.original.url"
-        :title="gif.title"
-        :author="author(gif.user)"
-        :avatar="avatar(gif.user)"
-        :uploaded="gif.import_datetime"
-        :rating="gif.rating"
-      />
+        :gif="gif"
+        :detail="compareIds(gif.id)"
+      >
+        <template v-slot:nav>
+          <gif-list-item-nav
+            :close="compareIds(gif.id)"
+            :gifId="gif.id"
+            :gif="gif"
+            @showDetails="toggleGifDetails"
+          />
+        </template>
+      </gif-list-item>
     </div>
     <spinner v-if="isLoading"/>
   </div>
@@ -20,15 +22,21 @@
 
 <script>
 import GifListItem from './GifListItem'
+import GifListItemNav from './GifListItemNav';
 import Spinner from './base/Spinner'
 import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'GifList',
   components: {
     GifListItem,
+    GifListItemNav,
     Spinner
   },
+  props: {
+    gifs: Array
+  },
   data: () => ({
+    gifId: '',
     options: {
       sort: 'relevant', 
       lang: 'en', 
@@ -37,19 +45,15 @@ export default {
       type: 'gifs'
     }
   }),
-  created() {
-    
-  },
   mounted() {
-   
     window.addEventListener('scroll', this.getMoreGifs)
   },
-  destroy() {
+  unmounted() {
+    console.log('destroy');
     window.removeEventListener('scroll', this.getMoreGifs)
   },
   computed: {
     ...mapGetters('gifs', [
-      'gifs',
       'total',
       'status',
       'numberOfGifs'
@@ -59,6 +63,12 @@ export default {
     }
   },
   methods: {
+    toggleGifDetails(value) {
+      this.gifId = value;
+    },
+    compareIds(id) {
+      return this.gifId === id
+    },
     author(value) {
       return (value) ? value.username : ''
     },
@@ -66,7 +76,7 @@ export default {
       return (value) ? value.avatar_url : ''
     },
     hasMoreGifs() {
-      let gifElement = this.$refs.gifs
+      let gifElement = document.getElementById('gifs')
       return (window.innerHeight + window.scrollY >= gifElement.offsetHeight) && 
              this.numberOfGifs < this.total && 
              this.status === 'ok';
@@ -90,18 +100,36 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$column-width: 230px;
+$column-witdh-md: 380px;
+$column-width-sm: 100vw;
 .gifs {
   display: flex;
   flex-direction: column;
 }
 .gifs__list {
   margin-top: 50px;
-  -webkit-column-count: 3;
+  -webkit-column-width: $column-width;
   -webkit-column-gap:   0px;
-  -moz-column-count:    3;
+  -moz-column-width:    $column-width;
   -moz-column-gap:      0px;
-  column-count:         3;
-  column-gap:           0px;  
-  width: 890px;
+  column-width:         $column-width;
+  column-gap:           0px;   
+  width: 950px;
+  @include respond-to(medium-screens) {
+    -webkit-column-width: $column-witdh-md;
+    -webkit-column-gap:   0px;
+    -moz-column-width:    $column-witdh-md;
+    -moz-column-gap:      0px;
+    column-width:         $column-witdh-md;
+    width: 769px
+  }
+  @include respond-to(handhelds) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
 }
 </style>
