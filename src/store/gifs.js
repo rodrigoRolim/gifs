@@ -29,7 +29,7 @@ const actions = {
       Giphy.search(name, options)
         .then(res => {
           const { data } = res;
-          const { pagination: { total_count } } = res;
+          const { pagination: { total_count } } = res
           commit('total', total_count);
           commit('setGifs', data);
           commit('name', name);
@@ -51,7 +51,7 @@ const actions = {
         .then(res => {
           const { data } = res;
           const { pagination: { total_count } } = res
-          console.log(res)
+
           commit('total', total_count);
           commit('pushGifs', data);
           commit('status', 'ok')
@@ -74,6 +74,7 @@ const mutations = {
   },
   pushGifs(state, gifs) {
     state.gifs.push(...gifs);
+    console.log(state.gifs)
   },
   name(state, name) {
     state.name = name;
@@ -85,8 +86,10 @@ const mutations = {
     state.sort = newSort;
   },
   updateRating(state, newRating) {
-    console.log(newRating)
     state.rating = newRating;
+  },
+  updateLanguage(state, newLangs) {
+    state.lang = newLangs
   },
   incrementOffset(state) {
     state.options.offset += 10
