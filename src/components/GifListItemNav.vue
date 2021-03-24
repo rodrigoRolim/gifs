@@ -53,15 +53,16 @@ export default {
     },
     handlingGif() {
       if (!this.saved) {
-        this.saveGifFromFavorites()
+        this.saveGifToFavorites()
         this.saved = true;
         return;
       }
       this.removeGifFromFavorites()
       this.saved = false;
     },
-    saveGifFromFavorites() {
-      this.saveFavorite(this.gif);
+    saveGifToFavorites() {
+      const favorite = JSON.stringify(this.gif);
+      this.saveFavorite(favorite);
     },
     removeGifFromFavorites() {
       const id = this.gifId;
